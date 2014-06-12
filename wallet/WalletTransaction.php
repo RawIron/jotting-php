@@ -4,7 +4,8 @@
 abstract class WalletTransaction
 {
     protected $_engineMapper = array(
-            'self'  => array('_getBalance' => '_getSelf',    '_updateBalance' => '_updateSelf')
+            'self' => array('_getBalance' => '_getSelf',
+                            '_updateBalance' => '_updateSelf')
             );
             
     protected $_engine = false;
@@ -13,26 +14,24 @@ abstract class WalletTransaction
         return array_keys($_engineMapper);
     }    
     
+
     protected $_currencies = array('premium', 'coins');
     
     protected $_session = false;
-    protected $_log     = false;
+    protected $_log = false;
     
     protected $_accounts = array();
     protected $_currency = '';
     
-    /**
-     * constructor
-     */         
     public function __construct($session, $log)
     {
         $this->_session = $session;
-        $this->_log     = $log;
+        $this->_log = $log;
             
         foreach ($this->_currencies as $currency) {
             $this->_accounts[$currency]['balance']  = false;
         }
-                
+         
         $this->_reset();
     }
     
@@ -46,47 +45,37 @@ abstract class WalletTransaction
             $this->_accounts[$currency]['amountCredits'] = 0;
         }
     }    
-
     
     /**
-     * check currency argument
+     * check currency
      */   
-    protected function _checkandSetArgumentCurrency($currency)
+    protected function _checkandSetCurrency($currency)
     {
         if (! in_array($currency, $this->_currencies) ) {
             return false;         
         }
         
         $this->_currency = $currency;
-        
         return true;        
     }
     
     /**
-     * check amount argument
-     *  
-     * @return boolean
+     * check amount
      */   
-    protected function _checkArgumentAmount($amount) {
+    protected function _checkAmount($amount) {
         if ( $amount < 0 ) {           
             return false;
         }
-
         return true;        
     }    
     
     public function getAccountBalance($currency) {
-        $this->_checkandSetArgumentCurrency($currency);
-   
+        $this->_checkandSetCurrency($currency);
         return $this->_accounts[$this->_currency]['balance'];
     }    
     
-    /**
-     *  get balance of the transaction
-     */    
     public function getTransactionBalance($currency) {
-        $this->_checkandSetArgumentCurrency($currency);
-        
+        $this->_checkandSetCurrency($currency);
         return $this->_accounts[$this->_currency]['amountCredits'] - $this->_accounts[$this->_currency]['amountDebits'];
     }
     
@@ -96,13 +85,9 @@ abstract class WalletTransaction
                 return true;
             }
         }
-        
         return false;     
     }
     
-    /**
-     *  get currencies of the transaction
-     */    
     public function getTransactionCurrencies() {
         return $this->_currencies;
     }
@@ -112,7 +97,6 @@ abstract class WalletTransaction
         foreach ($this->_currencies as $currency) {
             $balances[$currency] = (int) 0;
         }
-        
         return $balances;        
     }
         
@@ -120,7 +104,7 @@ abstract class WalletTransaction
         $this->_setBalances();
                
         foreach ($this->_currencies as $currency) {
-            $this->_accounts[$currency]['balance']  += $amounts[$currency];
+            $this->_accounts[$currency]['balance'] += $amounts[$currency];
         }
     }
 
@@ -143,15 +127,14 @@ abstract class WalletTransaction
      *  add to credits
      */
     public function add($amount, $currency) {
-        if (!$this->_checkArgumentAmount($amount) ) {
+        if (!$this->_checkAmount($amount) ) {
             return false;
         }
-        if (!$this->_checkAndSetArgumentCurrency($currency) ) {
+        if (!$this->_checkAndSetCurrency($currency) ) {
             return false;
         }
 
         $this->_accounts[$this->_currency]['amountCredits'] += $amount;
-        
         return true;        
     }
 
@@ -160,21 +143,20 @@ abstract class WalletTransaction
      *  add to debits
      */
     public function sub($amount, $currency){
-        if (!$this->_checkArgumentAmount($amount) ) {
+        if (!$this->_checkAmount($amount) ) {
             return false;
         }
-        if (!$this->_checkAndSetArgumentCurrency($currency) ) {         
+        if (!$this->_checkAndSetCurrency($currency) ) {         
             return false;
         }
         
         $this->_accounts[$this->_currency]['amountDebits'] += $amount;
-
         return true;
     }
 
     
     protected abstract function _getBalance();
-    protected abstract function _updateBalance();
+    protected abstract function _updateBalance($amounts);
      
     /**
      *  removes/adds amount from funds
@@ -183,7 +165,6 @@ abstract class WalletTransaction
     
     /**
      *  refund
-     *  @return boolean
      */    
     public abstract function rollback();
 

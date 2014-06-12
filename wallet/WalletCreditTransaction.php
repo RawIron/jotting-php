@@ -2,6 +2,7 @@
 
 require_once 'WalletTransaction.php';
 
+
 /**
  * multiple calls of withdraw() are supported
  * only one currency
@@ -18,12 +19,11 @@ class WalletCreditTransaction extends WalletTransaction
         $this->_reset();
 
         
-        $this->_engineMapper['mysql'] = array('_getBalance' => '_getBalance', '_updateBalance' => '_updateBalance'); 
-        
+        $this->_engineMapper['mysql'] = array('_getBalance' => '_getBalance',
+                                              '_updateBalance' => '_updateBalance'); 
         if (! isset($this->_engineMapper[$session->getEngine()]) ) {
             return false;
         }
-       
         $this->_engine = $session->getEngine();
     }
     
@@ -75,7 +75,6 @@ class WalletCreditTransaction extends WalletTransaction
 
         $balances['premium'] = (int) $row['Premium'];
         $balances['coins'] = (int) $row['Coins'];
-                
         return $balances;
     }
     
@@ -152,9 +151,7 @@ class WalletCreditTransaction extends WalletTransaction
         return false;
     }    
     
-    /**
-     *  removes/adds amount from funds
-     */
+
     public function commit()
     {
         if (! $this->_checkIfOneBalanceChanged()) {
@@ -169,12 +166,11 @@ class WalletCreditTransaction extends WalletTransaction
             }
         }
 
-        $this->{$this->_engineMapper[$this->_engine]['_updateBalance']}($amounts);
+        $this->{$this->_engineMapper[$this->_engine]['_updateBalance']}($this->_accounts);
 
         $this->_reset();
         return true;
     }
-    
     
     public function rollback() {           
         $this->_reset();        

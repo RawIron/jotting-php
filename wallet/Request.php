@@ -2,11 +2,12 @@
  
 require_once 'WalletCreditTransaction.php';
 
+
 class DsSession {
-    protected $_userId = null;
-    protected $_connection = false;
-    protected $_engine   = 'mysql';
-    protected $_messages = array();
+    private $_userId = null;
+    private $_connection = false;
+    private $_engine   = 'mysql';
+    private $_messages = array();
     
     public function __construct($userId, $engine) {
         $this->_userId = $userId;
