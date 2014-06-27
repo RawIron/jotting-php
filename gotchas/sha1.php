@@ -11,7 +11,6 @@ class Sha1Test extends PHPUnit_Framework_TestCase {
       array("salt" => "heavy", "message" => "rain",
             "signature" => "7e480ccb19b450094b169f6f3779b8a745b1da5b"),
     );
-
     foreach($sha1_hmac as $encode) {
       $signature = hash_hmac('sha1', $encode['message'], $encode['salt'], false);
       $this->assertEquals($signature, $encode['signature']);
@@ -28,10 +27,21 @@ class Sha1Test extends PHPUnit_Framework_TestCase {
       array("salt" => "heavy", "message" => "rain",
             "signature" => "fbec17cb2fcbbd1c659b252230b48826fc563788"),
     );
-
     foreach($sha1 as $encode) {
       $signature = sha1($encode['message']);
-      $this->assertEquals($signature, $encode['signature']);
+      $this->assertEquals($encode['signature'], $signature);
+    }
+  }
+
+  public function test_sha1_isnot_hmacsha1() {
+    $sha1 = array(
+      array("salt" => "b2", "message" => "a1",
+            "signature" => "f29bc91bbdab169fc0c0a326965953d11c7dff83"),
+    );
+    foreach($sha1 as $encode) {
+      $signature_sha1 = sha1($encode['message']);
+      $signature_hmac = hash_hmac('sha1', $encode['message'], null, false);
+      $this->assertNotEquals($signature_hmac, $signature_sha1);
     }
   }
 
