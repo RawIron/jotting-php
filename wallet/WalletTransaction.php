@@ -1,74 +1,64 @@
 <?php
 
+require_once 'WalletEngines.php';
 
-abstract class WalletTransaction
-{
-    protected $_engineMapper = array(
-            'self' => array('_getBalance' => '_getSelf',
-                            '_updateBalance' => '_updateSelf')
-            );
-            
-    protected $_engine = false;
-    
-    public function getEngines() {
-        return array_keys($_engineMapper);
-    }    
-    
 
-    protected $_currencies = array('premium', 'coins');
+class Currencies {
+    private static $_currencies = array('premium', 'coins');
     
-    protected $_session = false;
-    protected $_log = false;
+    public static function getCurrencies() {
+        return self::$_currencies;
+    }
+}
+
+
+
+abstract class WalletTransaction {
+
+    private $_session = false;
+    private $_log = false;
     
+    private $_currencies = array();
     protected $_accounts = array();
     protected $_currency = '';
     
-    public function __construct($session, $log)
-    {
+
+    public function __construct($session, $currencies, $log) {
         $this->_session = $session;
+        $this->_currencies = $currencies;
         $this->_log = $log;
-            
+         
         foreach ($this->_currencies as $currency) {
-            $this->_accounts[$currency]['balance']  = false;
+            $this->_accounts[$currency]['sync'] = false;
+            $this->_accounts[$currency]['balance'] = 0;
         }
          
         $this->_reset();
     }
     
-    /**
-     * clean up transaction data
-     */
-    protected function _reset()
-    {
+    protected function _reset() {
         foreach ($this->_currencies as $currency) {
-            $this->_accounts[$currency]['amountDebits']  = 0;
-            $this->_accounts[$currency]['amountCredits'] = 0;
+            $this->_accounts[$currency]['debits'] = 0;
+            $this->_accounts[$currency]['credits'] = 0;
         }
     }    
     
-    /**
-     * check currency
-     */   
-    protected function _checkandSetCurrency($currency)
-    {
+    protected function _checkandSetCurrency($currency) {
         if (! in_array($currency, $this->_currencies) ) {
             return false;         
         }
-        
         $this->_currency = $currency;
         return true;        
     }
     
-    /**
-     * check amount
-     */   
     protected function _checkAmount($amount) {
         if ( $amount < 0 ) {           
             return false;
         }
         return true;        
     }    
-    
+
+ 
     public function getAccountBalance($currency) {
         $this->_checkandSetCurrency($currency);
         return $this->_accounts[$this->_currency]['balance'];
@@ -76,10 +66,11 @@ abstract class WalletTransaction
     
     public function getTransactionBalance($currency) {
         $this->_checkandSetCurrency($currency);
-        return $this->_accounts[$this->_currency]['amountCredits'] - $this->_accounts[$this->_currency]['amountDebits'];
+        return   $this->_accounts[$this->_currency]['credits']
+               - $this->_accounts[$this->_currency]['debits'];
     }
     
-    protected function _checkIfOneBalanceChanged() {
+    public function _checkIfOneBalanceChanged() {
         foreach ($this->_currencies as $currency) {            
             if ($this->getTransactionBalance($currency) != 0) {
                 return true;
@@ -88,39 +79,26 @@ abstract class WalletTransaction
         return false;     
     }
     
-    public function getTransactionCurrencies() {
+    public function getCurrencies() {
         return $this->_currencies;
     }
 
-    
-    protected function _getSelf() {
-        foreach ($this->_currencies as $currency) {
-            $balances[$currency] = (int) 0;
-        }
-        return $balances;        
-    }
-        
-    public function _updateSelf($amounts) {
-        $this->_setBalances();
-               
-        foreach ($this->_currencies as $currency) {
-            $this->_accounts[$currency]['balance'] += $amounts[$currency];
-        }
-    }
 
-    protected function _setBalances() {
+    protected function _syncBalance() {
+        $balances = array();
+
         foreach ($this->_currencies as $currency) {
-            if ($this->_accounts[$currency]['balance'] === false) {
-                $balances = $this->{$this->_engineMapper[$this->_engine]['_getBalance']}();
+            if ($this->_accounts[$currency]['sync'] === false) {
+                $balances = $this->_getBalance();
                 break;
             }
         }
 
         foreach ($this->_currencies as $currency) {
-            if ($this->_accounts[$currency]['balance'] === false) {
+            if ($this->_accounts[$currency]['sync'] === false) {
                 $this->_accounts[$currency]['balance'] = $balances[$currency];
             }
-        }        
+        }
     }
     
     /**
@@ -134,7 +112,7 @@ abstract class WalletTransaction
             return false;
         }
 
-        $this->_accounts[$this->_currency]['amountCredits'] += $amount;
+        $this->_accounts[$this->_currency]['credits'] += $amount;
         return true;        
     }
 
@@ -150,13 +128,22 @@ abstract class WalletTransaction
             return false;
         }
         
-        $this->_accounts[$this->_currency]['amountDebits'] += $amount;
+        $this->_accounts[$this->_currency]['debits'] += $amount;
         return true;
     }
 
     
-    protected abstract function _getBalance();
-    protected abstract function _updateBalance($amounts);
+    protected function _getBalance() {
+      return $this->_session->read();
+    }
+
+    protected function _updateBalance() {
+      $amounts = array();
+      foreach($this->_currencies as $currency) {
+        $amounts[$currency] = $this->_accounts[$currency]['balance'];
+      }
+      return $this->_session->update($amounts);
+    }
      
     /**
      *  removes/adds amount from funds

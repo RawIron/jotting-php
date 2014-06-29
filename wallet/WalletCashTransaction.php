@@ -2,16 +2,15 @@
 
 require_once 'WalletTransaction.php';
 
+
 /**
  * multiple calls of sub() and add() are supported
  * only one currency
  *
  */
-class WalletCashTransaction extends WalletTransaction
-{    
-    /**
-     * constructor
-     */  
+
+class WalletCashTransaction extends WalletTransaction {    
+
     public function __construct($userId, $connection, LogRecord $log) {
         parent::__construct($userId, $connection, $log);
         $this->_reset();    
@@ -32,8 +31,7 @@ class WalletCashTransaction extends WalletTransaction
     /**
      * write to data store
      */      
-    protected function _updateBalance($amounts)
-    {
+    protected function _updateBalance($amounts) {
         parent::_updateBalance($amounts);        
 
         $query =
@@ -96,8 +94,7 @@ class WalletCashTransaction extends WalletTransaction
     }
     
 
-    public function commit()
-    {
+    public function commit() {
         if (! $this->_checkIfOneBalanceChanged()) {
             return true;
         }
@@ -118,8 +115,7 @@ class WalletCashTransaction extends WalletTransaction
     }
     
 
-    public function rollback()
-    {
+    public function rollback() {
         $total = 0;
         foreach ($this->_currencies as $currency) {
             $amounts[$currency] = $this->_accounts[$this->_currency]['withdrawn'];
@@ -136,7 +132,7 @@ class WalletCashTransaction extends WalletTransaction
 
         $this->_log->append(array('walletRollback' => true));
                         
-        $this->_reset();    
+        $this->_reset(); 
         return true;
     }
 }
