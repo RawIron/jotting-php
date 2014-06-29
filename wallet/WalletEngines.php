@@ -35,6 +35,7 @@ class MemoryEngine implements WalletEngine {
     foreach ($this->_currencies as $currency) {
         $this->_accounts[$currency]['balance'] += $amounts[$currency];
     }
+    return true;
   }
 
 }

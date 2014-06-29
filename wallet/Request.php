@@ -60,6 +60,37 @@ class WalletCreditTransactionTest extends PHPUnit_Framework_TestCase {
   }
 
 
+  public function test_sub_nsf() {
+    $wallet = $this->wallet();
+    $rc = $wallet->sub(24,'premium');
+    $this->assertFalse($rc);
+  }
+
+  public function test_sub_debits() {
+    $wallet = $this->wallet();
+    $wallet->sub(24,'premium');
+    $this->assertEquals(-24, $wallet->getTransactionBalance('premium'));
+  }
+
+  public function test_add() {
+    $wallet = $this->wallet();
+    $rc = $wallet->add(24,'premium');
+    $this->assertTrue($rc);
+  }
+
+  public function test_add_credits() {
+    $wallet = $this->wallet();
+    $wallet->add(24,'premium');
+    $this->assertEquals(24, $wallet->getTransactionBalance('premium'));
+  }
+
+  public function test_add_balance() {
+    $wallet = $this->wallet();
+    $wallet->add(24,'premium');
+    $wallet->commit();
+    $this->assertEquals(24, $wallet->getAccountBalance('premium'));
+  }
+
   public function test_two_currency_balance() {
     $wallet = $this->wallet();
     $wallet->add(24,'premium');

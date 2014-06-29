@@ -18,12 +18,8 @@ class WalletCreditTransaction extends WalletTransaction {
         $this->_reset();
     }
     
-    /**
-     * clean up transaction data
-     */
     protected function _reset() {
         parent::_reset();
-        
         foreach ($this->getCurrencies() as $currency) {
             $this->_accounts[$currency]['approved'] = false;
         }
@@ -48,13 +44,10 @@ class WalletCreditTransaction extends WalletTransaction {
                 return false;
             }
         }
-        
         return true;
     }
 
-    /**
-     *  add to debits
-     */
+
     public function sub($amount, $currency) {
         if (!parent::sub($amount, $currency)) {
             return false;
@@ -64,7 +57,6 @@ class WalletCreditTransaction extends WalletTransaction {
         if( $this->_approve() ) {
             return true;
         }
-        
         return false;
     }    
     
@@ -82,7 +74,7 @@ class WalletCreditTransaction extends WalletTransaction {
           }
         }
 
-        $this->_updateBalance($this->_accounts);
+        $this->_updateBalance();
 
         $this->_reset();
         return true;

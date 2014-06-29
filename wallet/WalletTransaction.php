@@ -38,8 +38,8 @@ abstract class WalletTransaction {
     
     protected function _reset() {
         foreach ($this->_currencies as $currency) {
-            $this->_accounts[$currency]['debits'] = 0;
-            $this->_accounts[$currency]['credits'] = 0;
+          $this->_accounts[$currency]['debits'] = 0;
+          $this->_accounts[$currency]['credits'] = 0;
         }
     }    
     
@@ -96,7 +96,8 @@ abstract class WalletTransaction {
 
         foreach ($this->_currencies as $currency) {
             if ($this->_accounts[$currency]['sync'] === false) {
-                $this->_accounts[$currency]['balance'] = $balances[$currency];
+              $this->_accounts[$currency]['balance'] = $balances[$currency];
+              $this->_accounts[$currency]['sync'] = true;
             }
         }
     }
@@ -140,9 +141,13 @@ abstract class WalletTransaction {
     protected function _updateBalance() {
       $amounts = array();
       foreach($this->_currencies as $currency) {
-        $amounts[$currency] = $this->_accounts[$currency]['balance'];
+        $amounts[$currency] = $this->getTransactionBalance($currency);
       }
-      return $this->_session->update($amounts);
+      if ($this->_session->update($amounts)) {
+        foreach($this->_currencies as $currency) {
+          $this->_accounts[$currency]['balance'] += $amounts[$currency];
+        }
+      }
     }
      
     /**
