@@ -41,6 +41,42 @@ class MemoryEngine implements WalletEngine {
 }
 
 
+class MemoryCashEngine implements WalletEngine {
+
+  private $_accounts = array();
+  private $_currencies = null;
+
+  public function __construct($currencies) {
+    $this->_currencies = $currencies;
+    $this->_reset();
+  }
+
+  private function _reset() {
+    foreach ($this->_currencies as $currency) {
+        $this->_accounts[$currency]['balance'] = 0;
+    }
+  }
+  
+  public function read($userId) {
+    throw new Exception('Not implemented');
+  }
+
+  public function update($userId, $amounts) {
+    foreach ($this->_currencies as $currency) {
+      if ($this->_accounts[$currency]['balance'] + $amounts[$currency] < 0 ) {
+        return false;
+      }
+    }
+    foreach ($this->_currencies as $currency) {
+      $this->_accounts[$currency]['balance'] += $amounts[$currency];
+    }
+    return true;
+  }
+
+}
+
+
+
 class MysqlEngine implements WalletEngine {
 
   private $_log = null;
@@ -115,3 +151,54 @@ class MysqlEngine implements WalletEngine {
   }
 
 } 
+
+
+class MysqlCashEngine implements WalletEngine {
+
+  private $_log = null;
+  private $_dbconn = null;
+
+  public function __construct($connection, $logger) {
+    $this->_dbconn = $connection;
+    $this->_log = $logger;
+  }
+
+  public function read($userId) {
+    throw new Exception('Not implemented');
+  }
+
+
+  public function update($userId, $amounts) {
+
+        $query =
+        "UPDATE Wallet SET
+            Premium= Premium+ FLOOR({$amounts['premium']}),
+            Coins= Coins+ FLOOR({$amounts['coins']})          
+        WHERE User= {$userId}
+        AND Premium+ {$amounts['premium']} >= 0 
+        AND Coins+ {$amounts['coins']} >= 0                      
+        ";
+        
+        $result=mysql_query($query, $this->_dbconn);
+        
+        $exceptionMessage = mysql_error($this->_dbconn);
+        if ($exceptionMessage) {
+          throw new SystemException($exceptionMessage, SystemException::QUERY_FAILURE, 'updateWallet', false);
+        }
+    
+
+        if ( !mysql_affected_rows($this->_dbconn)) {
+            $this->_log->append( array('walletNSF' => true) );            
+            return false;
+        
+        } else {
+            // log update of wallet
+            $this->_log->update( array('walletUpdate' => true) );
+            $this->_log->append( array('walletPremium' => (int) $amounts['premium']) );
+            $this->_log->append( array('walletCoins' => (int) $amounts['coins']) );
+
+            return true;
+        }
+    }
+
+}

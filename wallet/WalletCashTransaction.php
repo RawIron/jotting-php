@@ -11,59 +11,19 @@ require_once 'WalletTransaction.php';
 
 class WalletCashTransaction extends WalletTransaction {    
 
-    public function __construct($userId, $connection, LogRecord $log) {
-        parent::__construct($userId, $connection, $log);
+    public function __construct($session, $currencies, $log) {
+        parent::__construct($session, $currencies, $log);
         $this->_reset();    
     }
     
-    /**
-     * clean up transaction data
-     *
-     */
     protected function _reset() {
         parent::_reset();
-        
+
         foreach ($this->_currencies as $currency) {
             $this->_accounts[$currency]['withdrawn'] = 0;
         }
     }
 
-    /**
-     * write to data store
-     */      
-    protected function _updateBalance($amounts) {
-        parent::_updateBalance($amounts);        
-
-        $query =
-        "UPDATE Wallet SET
-            Premium= Premium+ FLOOR({$amounts['premium']}),
-            Coins= Coins+ FLOOR({$amounts['coins']})          
-        WHERE User= {$this->_userId}
-        AND Premium+ {$amounts['premium']} >= 0 
-        AND Coins+ {$amounts['coins']} >= 0                      
-        ";
-        
-        $result=mysql_query($query, $this->_dbconn);
-        
-        $exceptionMessage = mysql_error($this->_dbconn);
-        if ($exceptionMessage) {
-            throw new SystemException($exceptionMessage, SystemException::QUERY_FAILURE, 'updateWallet', false);
-        }
-    
-
-        if ( !mysql_affected_rows($this->_dbconn)) {
-            $this->_log->append( array('walletNSF' => true) );            
-            return false;
-        
-        } else {
-            // log update of wallet
-            $this->_log->update( array('walletUpdate' => true) );
-            $this->_log->append( array('walletPremium' => (int) $amounts['premium']) );
-            $this->_log->append( array('walletCoins' => (int) $amounts['coins']) );
-
-            return true;
-        }
-    }
 
     /**
      *  test for sufficient funds
@@ -73,12 +33,12 @@ class WalletCashTransaction extends WalletTransaction {
             return false;
         }
         
-        if ($this->_accounts[$this->_currency]['amountDebits'] == 0) {
+        if ($this->_accounts[$this->_currency]['debits'] == 0) {
             return true;
         }
         
         foreach ($this->_currencies as $currency) {
-            $amounts[$currency] = (-1) * $this->_accounts[$currency]['amountDebits'];
+            $amounts[$currency] = (-1) * $this->_accounts[$currency]['debits'];
         }
                 
         if ( !$this->_updateBalance($amounts) ) {
@@ -86,8 +46,8 @@ class WalletCashTransaction extends WalletTransaction {
         }
 
         foreach ($this->_currencies as $currency) {
-            $this->_accounts[$this->_currency]['withdrawn'] = $this->_accounts[$currency]['amountDebits'];           
-            $this->_accounts[$currency]['amountDebits'] = 0;
+            $this->_accounts[$this->_currency]['withdrawn'] = $this->_accounts[$currency]['debits'];           
+            $this->_accounts[$currency]['debits'] = 0;
         }
         
         return true;
@@ -100,10 +60,10 @@ class WalletCashTransaction extends WalletTransaction {
         }
         
         foreach ($this->_currencies as $currency) {
-            if ( $this->_accounts[$currency]['amountDebits']>0 ) {
+            if ( $this->_accounts[$currency]['debits'] > 0 ) {
                 return false;
             }
-            $amounts[$currency] = $this->_accounts[$currency]['amountCredits'];            
+            $amounts[$currency] = $this->_accounts[$currency]['credits'];            
         }
 
         if ( !$this->_updateBalance($amounts) ) {
@@ -132,7 +92,7 @@ class WalletCashTransaction extends WalletTransaction {
 
         $this->_log->append(array('walletRollback' => true));
                         
-        $this->_reset(); 
+        $this->_reset();
         return true;
     }
 }
