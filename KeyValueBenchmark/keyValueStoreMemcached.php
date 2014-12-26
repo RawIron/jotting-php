@@ -16,9 +16,9 @@ class keyValueStoreMemcached {
     }
     
     public function timeLookUpOfKeys($job) {
-        if (!$this->_mc) {
-            return false;
-        }
+      if (!$this->_mc) {
+        return false;
+      }
         
     	foreach ($job->lookUpKeys as $key) { 		
     		$start  = microtime();

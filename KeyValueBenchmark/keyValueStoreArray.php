@@ -11,14 +11,14 @@ class keyValueStoreArray {
     }
     
     public function timeLookUpOfKeys($job) {
-        $firstRead = true;
-        $start = microtime();      
+      $firstRead = true;
+      $start = microtime();      
 
     	foreach ($job->lookUpKeys as $key) {
     		if (!$firstRead) {
     	       $start = microtime();
     		}
-    	    $text = $job->keyValueArray[$key][$job->attributeName];
+    	  $text = $job->keyValueArray[$key][$job->attributeName];
     		$end = microtime();
     		$duration[] = number_format($end - $start,6);
     		
