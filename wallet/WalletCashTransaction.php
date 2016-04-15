@@ -1,7 +1,8 @@
 <?php
 
-require_once 'WalletTransaction.php';
+namespace RawIron\Wallet;
 
+require_once 'WalletTransaction.php';
 
 /**
  * multiple calls of sub() and add() are supported

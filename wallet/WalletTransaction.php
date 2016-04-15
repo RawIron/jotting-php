@@ -1,16 +1,8 @@
 <?php
 
+namespace RawIron\Wallet;
+
 require_once 'WalletEngines.php';
-
-
-class Currencies {
-    private static $_currencies = array('premium', 'coins');
-    
-    public static function getCurrencies() {
-        return self::$_currencies;
-    }
-}
-
 
 
 abstract class WalletTransaction {
@@ -23,7 +15,7 @@ abstract class WalletTransaction {
     protected $_currency = '';
     
 
-    public function __construct($session, $currencies, $log) {
+    public function __construct(WalletStore $session, $currencies, $log) {
         $this->_session = $session;
         $this->_currencies = $currencies;
         $this->_log = $log;

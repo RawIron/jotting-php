@@ -1,59 +1,20 @@
 <?php
  
+namespace RawIron\Wallet;
+
 require_once 'WalletCreditTransaction.php';
 require_once 'WalletEngines.php';
+require_once 'Logger.php';
+require_once 'Currency.php';
 
 
-class DsSession {
-    private $_userId = null;
-    private $_connection = false;
-    private $_engine = null;
-    private $_messages = array();
-    
-    public function __construct($userId, $engine) {
-        $this->_userId = $userId;
-        $this->_engine = $engine;
-    }
-    
-    public function getEngine() {
-        return $this->_engine;
-    }
-
-    public function read() {
-      return $this->_engine->read($this->_userId);
-    }
-
-    public function update($amounts) {
-      return $this->_engine->update($this->_userId, $amounts);
-    }
-    
-    public function addMessage($request) {
-        $this->_messages[] = $request;
-    }
-    
-    public function sentMessages() {
-        foreach ($this->_messages as $message) {
-            print_r($message);
-        }
-    }
-}
-
-
-class Logger {
-    public function append($message) {
-        return true;
-    }
-}
-
-
-
-class WalletCreditTransactionTest extends PHPUnit_Framework_TestCase {
+class WalletCreditTransactionTest extends \PHPUnit_Framework_TestCase {
 
   private function wallet() {
     $currencies = Currencies::getCurrencies();
     $engine = new MemoryEngine($currencies);
     $userId  = 123;
-    $session = new DsSession($userId, $engine);
+    $session = new WalletStore($userId, $engine);
     $logger  = new Logger();
     $wallet  = new WalletCreditTransaction($session, $currencies, $logger);
     return $wallet;

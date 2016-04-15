@@ -1,5 +1,7 @@
 <?php
 
+namespace RawIron\Wallet;
+
 require_once 'WalletTransaction.php';
 
 

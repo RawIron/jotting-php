@@ -29,13 +29,15 @@ in case a counter represents real dollars (*premium currency*) any issues with t
 ```
 
 #### Tests
-run the tests
+run the tests wihtin the *wallet* folder
 ```
-phpunit *Test.php
+phpunit .
 ```
 
 ### Benchmark
 
+
 ### Message Queue Worker
+
 
 ### Gotchas

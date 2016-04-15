@@ -1,13 +1,49 @@
 <?php
 
+namespace RawIron\Wallet;
 
-interface WalletEngine {
+
+interface Engine {
   public function read($userId);
   public function update($userId, $balances);
 }
 
 
-class MemoryEngine implements WalletEngine {
+class WalletStore {
+    private $_userId = null;
+    private $_engine = null;
+    private $_messages = array();
+    
+    public function __construct($userId, $engine) {
+        $this->_userId = $userId;
+        $this->_engine = $engine;
+    }
+    
+    public function getEngine() {
+        return $this->_engine;
+    }
+
+    public function read() {
+      return $this->_engine->read($this->_userId);
+    }
+
+    public function update($amounts) {
+      return $this->_engine->update($this->_userId, $amounts);
+    }
+    
+    public function addMessage($request) {
+        $this->_messages[] = $request;
+    }
+    
+    public function sentMessages() {
+        foreach ($this->_messages as $message) {
+            print_r($message);
+        }
+    }
+}
+
+
+class MemoryEngine implements Engine {
 
   private $_accounts = array();
   private $_currencies = null;
@@ -41,7 +77,7 @@ class MemoryEngine implements WalletEngine {
 }
 
 
-class MemoryCashEngine implements WalletEngine {
+class MemoryCashEngine implements Engine {
 
   private $_accounts = array();
   private $_currencies = null;
@@ -77,7 +113,7 @@ class MemoryCashEngine implements WalletEngine {
 
 
 
-class MysqlEngine implements WalletEngine {
+class MysqlEngine implements Engine {
 
   private $_log = null;
   private $_dbconn = null;
@@ -153,7 +189,7 @@ class MysqlEngine implements WalletEngine {
 } 
 
 
-class MysqlCashEngine implements WalletEngine {
+class MysqlCashEngine implements Engine {
 
   private $_log = null;
   private $_dbconn = null;
