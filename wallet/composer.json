@@ -1,0 +1,12 @@
+{
+    "name": "rawiron/wallet",
+    "description": "wallet for games",
+
+    "require": {
+        "phpunit/phpunit": "^4.7"
+    },
+
+    "autoload": {
+        "psr-4": {"RawIron\\Wallet\\": "./src/"}
+    }
+}

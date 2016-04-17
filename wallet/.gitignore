@@ -1,0 +1,11 @@
+# composer
+vendor/
+composer.phar
+composer.lock
+
+#phpunit.xml
+.DS_Store
+.php_cs.cache
+
+# vagrant
+.vagrant
