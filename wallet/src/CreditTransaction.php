@@ -2,7 +2,7 @@
 
 namespace RawIron\Wallet;
 
-use RawIron\Wallet\WalletTransaction;
+use RawIron\Wallet;
 
 
 /**
@@ -13,7 +13,7 @@ use RawIron\Wallet\WalletTransaction;
  */
 
 
-class WalletCreditTransaction extends WalletTransaction {
+class CreditTransaction extends Wallet\Transaction {
 
     public function __construct($session, $currencies, $log) {
         parent::__construct($session, $currencies, $log);

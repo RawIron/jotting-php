@@ -2,14 +2,14 @@
  
 namespace RawIron\Wallet;
 
-use RawIron\Wallet\WalletCreditTransaction;
 use RawIron\Wallet\WalletEngines\MemoryEngine;
 use RawIron\Wallet\WalletEngines\WalletStore;
 use RawIron\Wallet\Logger;
 use RawIron\Wallet\Currency;
+use RawIron\Wallet;
 
 
-class WalletCreditTransactionTest extends \PHPUnit_Framework_TestCase {
+class CreditTransactionTest extends \PHPUnit_Framework_TestCase {
 
   private function wallet() {
     $currencies = Currency::getCurrencies();
@@ -17,7 +17,7 @@ class WalletCreditTransactionTest extends \PHPUnit_Framework_TestCase {
     $userId  = 123;
     $session = new WalletStore($userId, $engine);
     $logger  = new Logger();
-    $wallet  = new WalletCreditTransaction($session, $currencies, $logger);
+    $wallet  = new Wallet\CreditTransaction($session, $currencies, $logger);
     return $wallet;
   }
 

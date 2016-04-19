@@ -2,15 +2,14 @@
 
 namespace RawIron\Wallet;
 
-use RawIron\Wallet\WalletTransaction;
+use RawIron\Wallet;
 
 /**
  * multiple calls of sub() and add() are supported
  * only one currency
  *
  */
-
-class WalletCashTransaction extends WalletTransaction {    
+class CashTransaction extends Wallet\Transaction {    
 
     public function __construct($session, $currencies, $log) {
         parent::__construct($session, $currencies, $log);

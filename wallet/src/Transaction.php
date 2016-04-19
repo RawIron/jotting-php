@@ -5,7 +5,7 @@ namespace RawIron\Wallet;
 use RawIron\Wallet\WalletEngines\WalletStore;
 
 
-abstract class WalletTransaction {
+abstract class Transaction {
 
     private $_session = false;
     private $_log = false;
