@@ -2,7 +2,7 @@
 
 namespace RawIron\Wallet;
 
-require_once 'WalletTransaction.php';
+use RawIron\Wallet\WalletTransaction;
 
 /**
  * multiple calls of sub() and add() are supported

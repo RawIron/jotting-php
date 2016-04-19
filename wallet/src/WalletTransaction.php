@@ -2,7 +2,7 @@
 
 namespace RawIron\Wallet;
 
-require_once 'WalletEngines.php';
+use RawIron\Wallet\WalletEngines\WalletStore;
 
 
 abstract class WalletTransaction {

@@ -3,7 +3,7 @@
 namespace RawIron\Wallet;
 
 
-class Currencies {
+class Currency {
     private static $_currencies = array('premium', 'coins');
     
     public static function getCurrencies() {
