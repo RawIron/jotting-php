@@ -2,8 +2,8 @@
  
 namespace RawIron\Wallet;
 
-use RawIron\Wallet\WalletEngines\MemoryEngine;
-use RawIron\Wallet\WalletEngines\WalletStore;
+use RawIron\Wallet\Engines\MemoryEngine;
+use RawIron\Wallet\Engines\WalletStore;
 use RawIron\Wallet\Logger;
 use RawIron\Wallet\Currency;
 use RawIron\Wallet;

@@ -1,6 +1,6 @@
 <?php
 
-namespace RawIron\Wallet\WalletEngines;
+namespace RawIron\Wallet\Engines;
 
 
 class MysqlEngine implements Engine {

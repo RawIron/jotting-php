@@ -2,7 +2,7 @@
 
 namespace RawIron\Wallet;
 
-use RawIron\Wallet\WalletEngines\WalletStore;
+use RawIron\Wallet\Engines\WalletStore;
 
 
 abstract class Transaction {
