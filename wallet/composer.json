@@ -3,7 +3,8 @@
     "description": "wallet for games",
 
     "require": {
-        "phpunit/phpunit": "^4.7"
+        "php": "^7.0",
+        "phpunit/phpunit": "^5.1"
     },
 
     "autoload": {
