@@ -1,10 +1,12 @@
 {
     "name": "rawiron/wallet",
     "description": "wallet for games",
+    "minimum-stability": "dev",
 
     "require": {
         "php": "^7.0",
-        "phpunit/phpunit": "^5.1"
+        "phpunit/phpunit": "^5.1",
+        "aura/di": "^3.0"
     },
 
     "autoload": {
