@@ -31,15 +31,18 @@ class Currency:
 
 class Session:
     def __init__(self, user_id, engine):
-        pass
+        assert(isinstance(engine, MemoryEngine))
 
 class Wallet:
     pass
 
 class CreditTransaction:
     def __init__(self, session, currencies, logger):
-        pass
+        self.logger = logger
+
     def deposit(self, amount):
+        assert(isinstance(logger, WarnLogger))
+        logger.warn()
         print "deposited %s" % (amount,)
 
 
@@ -51,7 +54,7 @@ def create_logger():
     return WarnLogger()
 
 def create_session():
-    return Session(12, create_engine())
+    return Session(12, inject.instance(Engine))
 
 def create_wallet():
     currencies = Currency.currencies()
@@ -60,14 +63,14 @@ def create_wallet():
     return CreditTransaction(session, currencies, logger)
 
 
-def config(binder):
+def production(binder):
     binder.bind_to_provider(Engine, create_engine)
     binder.bind_to_provider(Logger, create_logger)
     binder.bind_to_provider(Session, create_session)
     binder.bind_to_provider(Wallet, create_wallet)
 
 
-inject.configure(config)
+inject.configure(production)
 
 logger = inject.instance(Logger)
 logger.warn()
