@@ -1,4 +1,16 @@
-import inject
+def enum(*sequential, **named):
+    enums = dict(zip(sequential, range(len(sequential))), **named)
+    return type('Enum', (), enums)
+
+PersistEngines = enum('Memory', 'Sql')
+TransactionType = enum('Credit', 'Cash')
+
+assert(PersistEngines.Memory == 0)
+
+
+PERSIST_ENGINE = PersistEngines.Memory
+SUPPORTED_CURRENCIES = ['coins']
+TRANSACTION_TYPE = TransactionType.Credit
 
 
 class Logger:
@@ -46,9 +58,16 @@ class CreditTransaction:
         print "deposited %s" % (amount,)
 
 
+import inject
+
+
 def create_engine():
+    switcher = {
+        PersistEngines.Memory: MemoryEngine,
+        PersistEngines.Sql: MysqlEngine
+        }
     currencies = Currency.currencies()
-    return MemoryEngine(currencies)
+    return switcher[PERSIST_ENGINE](currencies)
 
 def create_logger():
     return WarnLogger()
