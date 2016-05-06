@@ -1,34 +1,31 @@
-FROM php:5.6-alpine
+FROM alpine
 
 #---> SYSTEM <---
 
 # install php
-#RUN apk update && \
-#    apk add php php-json php-phar php-openssl
+RUN apk update && \
+    apk add php php-openssl php-dom php-phalcon
 
 # install composer so it handles the php package installation
-RUN apk update && \
-    apk add curl git
-
-RUN curl -sS https://getcomposer.org/installer | php
-RUN mv composer.phar /usr/local/bin/composer
+RUN echo "http://dl-3.alpinelinux.org/alpine/edge/testing" >>/etc/apk/repositories && \
+    apk update && \
+    apk add git composer
 
 
 #---> DEPLOY <---
 
 # create the app directory
-RUN mkdir -p /var/www/app
+RUN mkdir -p /var/www/app/src
+
+WORKDIR /var/www/app
 
 # php packages
-COPY composer.json /var/www/app/composer.json
-RUN cd /var/www/app && \
-    composer install
-
-# configure phpunit
-COPY phpunit.xml /var/www/app/phpunit.xml
+COPY composer.json composer.json
+RUN composer install
 
 # deploy source
+COPY src src
 
-# run tests
-RUN cd /var/www/app && \
-    phpunit
+# configure phpunit and run tests
+COPY phpunit.xml phpunit.xml
+RUN vendor/bin/phpunit
