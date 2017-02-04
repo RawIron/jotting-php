@@ -1,6 +1,9 @@
 language: php
 
 php:
+    - '7.0'
     - '7.1'
 
-script: cd wallet; phpunit
+script:
+    - composer install
+    - cd wallet; phpunit
