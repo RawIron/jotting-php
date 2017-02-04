@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RawIron/scratch-php.svg)](https://travis-ci.org/RawIron/scratch-php)
+
 ## quick PHP hacks
 
 ### Wallet
