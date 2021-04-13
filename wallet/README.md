@@ -1,4 +1,4 @@
-### Wallet
+## Wallet
 
 in computer games parts of the user's game state is captured in counters.
 some counters can only increase, like *experience*, commonly abbreviated as *xp*.
@@ -6,6 +6,8 @@ some counters can only increase, like *experience*, commonly abbreviated as *xp*
 the *wallet* is a counter which can increase and decrease. it is an account.
 often a single request to the game server applies multiple changes to a *wallet*.
 in a naive implementation every change is made persistent immediately.
+
+### overview
 
 #### lazy updates
 
@@ -28,7 +30,7 @@ for example as a result the hacker paid once but received more than one item.
 in case a counter represents real dollars (*premium currency*) any issues with those counters are serious, because either the company or the player lost real money.
 
 
-#### Getting Started
+### Examples
 create a *Wallet\Transaction*
 ```php
 $currencies = Currency::getCurrencies();
@@ -46,14 +48,20 @@ $wallet->add(400,'coins');
 $wallet->sub(120,'coins');
 ```
 
-change the `balance`
+change the `balance` within the storage engine
 ```php
 $wallet->commit();
 ```
 
+### Getting Started
 
-#### Tests
+#### Install Dependencies
+```
+composer install
+```
+
+#### Run Tests
 run the tests wihtin the *wallet* folder
 ```
-phpunit
+./vendor/bin/phpunit
 ```
