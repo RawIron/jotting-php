@@ -4,8 +4,8 @@
     "minimum-stability": "dev",
 
     "require": {
-        "php": "^7.0",
-        "phpunit/phpunit": "^5.1",
+        "php": "^7.4",
+        "phpunit/phpunit": "^8",
         "aura/di": "^3.0"
     },
 

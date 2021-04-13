@@ -8,8 +8,10 @@ use RawIron\Wallet\Logger;
 use RawIron\Wallet\Currency;
 use RawIron\Wallet;
 
+use PHPUnit\Framework\TestCase;
 
-class CreditTransactionTest extends \PHPUnit_Framework_TestCase {
+
+class CreditTransactionTest extends TestCase {
 
   private function wallet() {
     $currencies = Currency::getCurrencies();
