@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/RawIron/scratch-php.svg)](https://travis-ci.org/RawIron/scratch-php)
+[![Build Status](https://travis-ci.org/RawIron/jotting-php.svg)](https://travis-ci.org/RawIron/jotting-php)
 
 ## Wallet
 
